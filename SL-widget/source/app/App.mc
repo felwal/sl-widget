@@ -23,7 +23,11 @@ class App extends Application.AppBase {
 
     //! Return the initial view of your application here
     function getInitialView() {
-        return [ new StopDetailView(_container), new StopDetailDelegate(_container) ];
+        var viewModel = _container.buildStopDetailViewModel(0, 0);
+        var view = new StopDetailView(viewModel);
+        var delegate = new StopDetailDelegate(_container, viewModel);
+
+        return [ view, delegate ];
     }
 
     //! Return the initial glance view of your application here

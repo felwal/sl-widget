@@ -2,30 +2,57 @@ using Toybox.WatchUi;
 
 class StopDetailDelegate extends WatchUi.BehaviorDelegate {
 
+    private var _container;
     private var _viewModel;
 
     // init
 
-    function initialize(container) {
+    function initialize(container, viewModel) {
         BehaviorDelegate.initialize();
-        _viewModel = container.stopDetailViewModel;
+
+        _container = container;
+        _viewModel = viewModel;
     }
 
     // override BehaviorDelegate
 
-    //! "DOWN"
+    //! "DOWN" / next stop
     function onNextPage() {
-        _viewModel.incStopCursor();
+        var stopCursor = _viewModel.getStopCursorIncreased();
+        var modeCursor = 0;
+
+        // don't switch view if <= 1 stop
+        if (stopCursor == _viewModel.stopCursor) {
+            return true;
+        }
+
+        var viewModel = _container.buildStopDetailViewModel(stopCursor, modeCursor);
+        var view = new StopDetailView(viewModel);
+        var delegate = new StopDetailDelegate(_container, viewModel);
+
+        WatchUi.switchToView(view, delegate, WatchUi.SLIDE_UP);
         return true;
     }
 
-    //! "UP"
+    //! "UP" / previous stop
     function onPreviousPage() {
-        _viewModel.decStopCursor();
+        var stopCursor = _viewModel.getStopCursorDecreased();
+        var modeCursor = 0;
+
+        // don't switch view if <= 1 stop
+        if (stopCursor == _viewModel.stopCursor) {
+            return true;
+        }
+
+        var viewModel = _container.buildStopDetailViewModel(stopCursor, modeCursor);
+        var view = new StopDetailView(viewModel);
+        var delegate = new StopDetailDelegate(_container, viewModel);
+
+        WatchUi.switchToView(view, delegate,  WatchUi.SLIDE_DOWN);
         return true;
     }
 
-    //! "START-STOP"
+    //! "START-STOP" / next mode
     function onSelect() {
         _viewModel.incModeCursor();
         return true;

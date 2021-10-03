@@ -9,9 +9,10 @@ class StopDetailView extends WatchUi.View {
 
     // init
 
-    function initialize(container) {
+    function initialize(viewModel) {
         View.initialize();
-        _viewModel = container.stopDetailViewModel;
+
+        _viewModel = viewModel;
     }
 
     // override View

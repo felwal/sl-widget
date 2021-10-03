@@ -12,6 +12,11 @@ class Container {
 
     // viewmodel
     var stopGlanceViewModel = new StopGlanceViewModel(_stopGlanceRepo);
-    var stopDetailViewModel = new StopDetailViewModel(_stopDetailRepo);
+
+    //
+
+    function buildStopDetailViewModel(stopCursor, modeCursor) {
+        return new StopDetailViewModel(_stopDetailRepo, stopCursor, modeCursor);
+    }
 
 }

@@ -1,9 +1,14 @@
+using Toybox.Timer;
 
 (:glance)
 class StopRepository {
 
+    private static const _REQUEST_TIME_INTERVAL = 30000;
+
     protected var _position;
     protected var _storage;
+
+    private var _timer = new Timer.Timer();
 
     // init
 
@@ -12,6 +17,17 @@ class StopRepository {
         _storage = storage;
 
         //_storage.resetStops(); _position.setPosDeg(debugLat, debugLon);
+    }
+
+    // timer
+
+    function startTimer(callback) {
+        _timer.stop();
+        _timer.start(callback, _REQUEST_TIME_INTERVAL, true);
+    }
+
+    function stopTimer() {
+        _timer.stop();
     }
 
     // position

@@ -1,22 +1,22 @@
-using Toybox.Timer;
 using Toybox.WatchUi;
+using Toybox.Timer;
 
 (:glance)
 class StopDetailViewModel {
 
-    private static const _REQUEST_TIME_INTERVAL = 30000;
     private static const _REQUEST_TIME_DELAY = 500;
 
     var stopCursor = 0;
     var modeCursor = 0;
 
     private var _repo;
-    private var _timer = new Timer.Timer();
 
     // init
 
-    function initialize(repo) {
+    function initialize(repo, stopCursor, modeCursor) {
         _repo = repo;
+        self.stopCursor = stopCursor;
+        self.modeCursor = modeCursor;
     }
 
     // request
@@ -30,7 +30,7 @@ class StopDetailViewModel {
 
     function disableRequests() {
         _repo.disablePositionHandling();
-        _timer.stop();
+        _repo.stopTimer();
     }
 
     private function _makeRequestsDelayed() {
@@ -38,7 +38,7 @@ class StopDetailViewModel {
     }
 
     private function _startRequestTimer() {
-        _timer.start(method(:makeRequests), _REQUEST_TIME_INTERVAL, true);
+        _repo.startTimer(method(:makeRequests));
     }
 
     //! Make requests to SlApi neccessary for detail display.
@@ -78,25 +78,15 @@ class StopDetailViewModel {
         return _repo.getModeCount(stopCursor);
     }
 
+    function getStopCursorIncreased() {
+        return _repo.getStopIndexRotated(stopCursor, 1);
+    }
+
+    function getStopCursorDecreased() {
+        return _repo.getStopIndexRotated(stopCursor, -1);
+    }
+
     // write
-
-    function incStopCursor() {
-        _rotStopCursor(1);
-    }
-
-    function decStopCursor() {
-        _rotStopCursor(-1);
-    }
-
-    private function _rotStopCursor(amount) {
-        stopCursor = _repo.getStopIndexRotated(stopCursor, amount);
-        modeCursor = 0;
-
-        // TODO: maybe a better way to request departures
-        //  e.g. let timer request for all stops
-        _repo.requestDepartures(stopCursor);
-        WatchUi.requestUpdate();
-    }
 
     function incModeCursor() {
         modeCursor = _repo.getModeIndexRotated(stopCursor, modeCursor);
